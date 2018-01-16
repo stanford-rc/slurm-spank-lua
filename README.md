@@ -11,7 +11,7 @@ Get the source and build the RPM:
 
 ```
 $ VER=0.37
-$ wget https://github.com/kcgthb/slurm-spank-lua/archive/v${VER}.tar.gz -O slurm-spank-lua-${VER}.tar.gz
+$ wget https://github.com/stanford-rc/slurm-spank-lua/archive/v${VER}.tar.gz -O slurm-spank-lua-${VER}.tar.gz
 $ rpmbuild -ta slurm-spank-lua-${VER}.tar.gz
 ```
 
