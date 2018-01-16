@@ -1,7 +1,7 @@
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
-Version: 0.37
-Release: 2
+Version: 0.38
+Release: 1
 License: GPL
 Group: System Environment/Base
 Source0: %{name}-%{version}.tar.gz
@@ -46,15 +46,19 @@ rm -rf "$RPM_BUILD_ROOT"
 
 %files
 %defattr(-,root,root,-)
+%dir %attr(0755,root,root) %{_sysconfdir}/slurm/lua.d
 %{_libdir}/slurm/lua.so
-%{_sysconfdir}/slurm/plugstack.conf.d/99-lua
+%{_sysconfdir}/slurm/plugstack.conf.d/lua.conf
 %{_mandir}/man8/spank-lua*
 
 
 %changelog
-* Tue Jan 16 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.37-1
-- Initial build, extracted and repackaged from LLNL's slurm-spank-plugins.
-
+* Tue Jan 16 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.38-1
+- Fix segfault if no Lua scripts are present
+- Include the slurm/lua.d directory
 * Tue Jan 16 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.37-2
 - Requires lua-devel, as the liblua.so symlink, which is required by the
   plugin, is only provided in the -devel package.
+* Tue Jan 16 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.37-1
+- Initial build, extracted and repackaged from LLNL's slurm-spank-plugins.
+
