@@ -12,8 +12,10 @@ This is extracted from [LLNL's Slurml SPANK plugins](https://github.com/grondo/s
 Get the source and build the RPM:
 
 ```
-$ VER=0.37
-$ wget https://github.com/stanford-rc/slurm-spank-lua/archive/v${VER}.tar.gz -O slurm-spank-lua-${VER}.tar.gz
+$ REPO=stanford-rc
+$ PROJ=slurm-spank-lua
+$ VER=$(curl -s https://api.github.com/repos/$REPO/$PROJ/releases/latest | awk '/tag_name/ {gsub(/"|,/,""); print $2}')
+$ wget https://github.com/$REPO/$PROJ/archive/${VER}.tar.gz -O slurm-spank-lua-${VER}.tar.gz
 $ rpmbuild -ta slurm-spank-lua-${VER}.tar.gz
 ```
 
@@ -29,11 +31,14 @@ $ cc -o lib/list.o -fPIC -c lib/list.c
 $ cc -shared -fPIC -o lua.so lua.o lib/list.o -llua
 ```
 
+Then `lua.so` should be placed in `/usr/lib/slurm`, and `lua.conf` in
+`/etc/slurm/plugstackconf.d/`.
+
 ## Usage
 
 See the man page (`man 8 spank-lua`) for details.
 
-### Required files
+### Configuration
 
 * `/etc/slurm/plugstackconf.d/lua.conf`: enable the SPANK Lua plugin
   ```
