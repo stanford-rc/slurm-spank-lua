@@ -7,6 +7,8 @@ This is extracted from [LLNL's Slurml SPANK plugins](https://github.com/grondo/s
 
 ## Installation
 
+### RPM-based installation (recommended)
+
 Get the source and build the RPM:
 
 ```
@@ -18,6 +20,25 @@ $ rpmbuild -ta slurm-spank-lua-${VER}.tar.gz
 Then install the generated RPM.
 
 
-## Usage 
+### Manual installation
+
+Source can be compiled with:
+```
+$ cc -o lua.o -fPIC -c lua.c
+$ cc -o lib/list.o -fPIC -c lib/list.c
+$ cc -shared -fPIC -o lua.so lua.o lib/list.o -llua
+```
+
+## Usage
 
 See the man page (`man 8 spank-lua`) for details.
+
+### Required files
+
+* `/etc/slurm/plugstackconf.d/lua.conf`: enable the SPANK Lua plugin
+  ```
+  required  lua.so  /etc/slurm/lua.d/*.lua
+  ```
+
+* `/etc/slurm/lua.d/*.lua`: actual Lua scripts to be loaded
+
