@@ -33,9 +33,10 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{_libdir}/slurm
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/slurm/plugstack.conf.d
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/slurm/lua.d
 install -m 755 lua.so $RPM_BUILD_ROOT%{_libdir}/slurm
 echo "required  lua.so  /etc/slurm/lua.d/*.lua" > \
-     $RPM_BUILD_ROOT/%{_sysconfdir}/slurm/plugstack.conf.d/99-lua
+     $RPM_BUILD_ROOT/%{_sysconfdir}/slurm/plugstack.conf.d/lua.conf
 install -D -m0644 spank-lua.8 $RPM_BUILD_ROOT/%{_mandir}/man8/spank-lua.8
 
 
