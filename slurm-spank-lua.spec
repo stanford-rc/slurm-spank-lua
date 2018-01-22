@@ -1,7 +1,7 @@
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
 Version: 0.38
-Release: 1
+Release: 2
 License: GPL
 Group: System Environment/Base
 Source0: %{name}-%{version}.tar.gz
@@ -33,10 +33,12 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT%{_libdir}/slurm
 mkdir -p $RPM_BUILD_ROOT%{_mandir}/man8
 mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/slurm/plugstack.conf.d
-mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/slurm/lua.d
+mkdir -p $RPM_BUILD_ROOT%{_sysconfdir}/slurm/lua.d/disabled
 install -m 755 lua.so $RPM_BUILD_ROOT%{_libdir}/slurm
+install -m 644 scripts/spank_demo.lua \
+    $RPM_BUILD_ROOT%{_sysconfdir}/slurm/lua.d/disabled
 echo "required  lua.so  /etc/slurm/lua.d/*.lua" > \
-     $RPM_BUILD_ROOT/%{_sysconfdir}/slurm/plugstack.conf.d/lua.conf
+    $RPM_BUILD_ROOT/%{_sysconfdir}/slurm/plugstack.conf.d/lua.conf
 install -D -m0644 spank-lua.8 $RPM_BUILD_ROOT/%{_mandir}/man8/spank-lua.8
 
 
@@ -53,6 +55,8 @@ rm -rf "$RPM_BUILD_ROOT"
 
 
 %changelog
+* Mon Jan 22 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.38-2
+- Provides spank_demo.lua script
 * Tue Jan 16 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.38-1
 - Fix segfault if no Lua scripts are present
 - Include the slurm/lua.d directory
