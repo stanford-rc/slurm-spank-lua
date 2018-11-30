@@ -1,7 +1,7 @@
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
 Version: 0.38
-Release: 2
+Release: 3
 License: GPL
 Group: System Environment/Base
 Source0: %{name}-%{version}.tar.gz
@@ -51,10 +51,13 @@ rm -rf "$RPM_BUILD_ROOT"
 %dir %attr(0755,root,root) %{_sysconfdir}/slurm/lua.d
 %{_libdir}/slurm/lua.so
 %{_sysconfdir}/slurm/plugstack.conf.d/lua.conf
+%{_sysconfdir}/slurm/lua.d/disabled/spank_demo.lua
 %{_mandir}/man8/spank-lua*
 
 
 %changelog
+* Thu Nov 29 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.38-3
+- Added missing SPEC %files entry for spank_demo.lua
 * Mon Jan 22 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.38-2
 - Provides spank_demo.lua script
 * Tue Jan 16 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.38-1
@@ -65,4 +68,3 @@ rm -rf "$RPM_BUILD_ROOT"
   plugin, is only provided in the -devel package.
 * Tue Jan 16 2018 Kilian Cavalotti <kilian@stanford.edu> - 0.37-1
 - Initial build, extracted and repackaged from LLNL's slurm-spank-plugins.
-
