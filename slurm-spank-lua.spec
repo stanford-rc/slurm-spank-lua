@@ -1,7 +1,9 @@
+%global slurm_version  %(rpm -q slurm-devel --qf "%{VERSION}" 2>/dev/null)
+
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
 Version: 0.39
-Release: 1
+Release: %{slurm_version}.1
 License: GPL
 Group: System Environment/Base
 Source0: %{name}-%{version}.tar.gz
