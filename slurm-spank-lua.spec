@@ -2,7 +2,7 @@
 
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
-Version: 0.40
+Version: 0.41
 Release: %{slurm_version}.1%{?dist}
 License: GPL
 Group: System Environment/Base
@@ -58,6 +58,8 @@ rm -rf "$RPM_BUILD_ROOT"
 
 
 %changelog
+* Tue Aug 11 2020 Trey Dockendorf <tdockendorf@osc.edu> - 0.41-1
+- Keep dist in RPM release
 * Tue Aug 11 2020 Trey Dockendorf <tdockendorf@osc.edu> - 0.40-1
 - Add Slurm version in RPM release
 - Add "package" target in Makefile
