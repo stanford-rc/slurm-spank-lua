@@ -3,7 +3,7 @@
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
 Version: 0.40
-Release: %{slurm_version}.1
+Release: %{slurm_version}.1%{?dist}
 License: GPL
 Group: System Environment/Base
 Source0: %{name}-%{version}.tar.gz
