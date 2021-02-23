@@ -1,4 +1,6 @@
 %global slurm_version  %(rpm -q slurm-devel --qf "%{VERSION}" 2>/dev/null)
+%define _use_internal_dependency_generator 0
+%define __find_requires %{_builddir}/find-requires
 
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
@@ -23,11 +25,22 @@ spank(8) manpage).
 
 %prep
 %setup -q
+# Dummy file used to get a RPM dependency on libslurm.so
+echo 'int main(){}' > %{_builddir}/libslurm_dummy.c
+cat <<EOF > %{_builddir}/find-requires
+#!/bin/sh
+# Add dummy to list of files sent to the regular find-requires
+{ echo %{_builddir}/libslurm_dummy; cat; } | \
+    %{_rpmconfigdir}/find-requires
+EOF
+chmod +x %{_builddir}/find-requires
 
 %build
 %{__cc} -g -o lua.o -fPIC -c lua.c
 %{__cc} -g -o lib/list.o -fPIC -c lib/list.c
 %{__cc} -g -shared -fPIC -o lua.so lua.o lib/list.o -llua
+# Dummy file to get a dependency on libslurm
+%{__cc} -lslurm -o %{_builddir}/libslurm_dummy %{_builddir}/libslurm_dummy.c
 
 
 %install
