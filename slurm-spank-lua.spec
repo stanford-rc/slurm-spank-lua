@@ -4,7 +4,7 @@
 
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
-Version: 0.42
+Version: 0.43
 Release: %{slurm_version}.1%{?dist}
 License: GPL
 Group: System Environment/Base
@@ -71,6 +71,8 @@ rm -rf "$RPM_BUILD_ROOT"
 
 
 %changelog
+* Tue May 11 2021 Trey Dockendorf <tdockendorf@osc.edu> - 0.43-1
+- Add support for Lua 5.3
 * Tue Mar 02 2021 Trey Dockendorf <tdockendorf@osc.edu> - 0.42-1
 - Force a dependency on versioned libslurm.so
 * Tue Aug 11 2020 Trey Dockendorf <tdockendorf@osc.edu> - 0.41-1
