@@ -1045,7 +1045,11 @@ static struct lua_script * lua_script_create (lua_State *L, const char *path)
      *   table.
      */
     lua_pushstring (script->L, "__index");
+#if LUA_VERSION_NUM >= 502
+    lua_pushglobaltable (script->L);
+#else
     lua_pushvalue (script->L, LUA_GLOBALSINDEX);
+#endif
     lua_settable (script->L, -3);
 
     /*  Now set metatable for the new globals table */
@@ -1054,7 +1058,11 @@ static struct lua_script * lua_script_create (lua_State *L, const char *path)
     /*  And finally replace the globals table with the (empty)  table
      *   now at top of the stack
      */
+#if LUA_VERSION_NUM >= 502
+    lua_pop (script->L, 1);
+#else
     lua_replace (script->L, LUA_GLOBALSINDEX);
+#endif
 
     return script;
 }
