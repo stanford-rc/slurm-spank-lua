@@ -39,7 +39,7 @@ $ REPO=stanford-rc
 $ PROJ=slurm-spank-lua
 $ VER=$(curl -s https://api.github.com/repos/$REPO/$PROJ/releases/latest | awk '/tag_name/ {gsub(/"|,/,""); print $2}')
 $ wget https://github.com/$REPO/$PROJ/archive/${VER}.tar.gz -O slurm-spank-lua-${VER//v}.tar.gz
-$ rpmbuild -ta slurm-spank-lua-${VER}.tar.gz
+$ rpmbuild -ta slurm-spank-lua-${VER//v}.tar.gz
 ```
 
 Install the generated RPM. For instance (paths, arch and version may vary):
