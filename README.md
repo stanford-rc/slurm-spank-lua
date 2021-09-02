@@ -1,6 +1,6 @@
 **The Lua SPANK plugin for Slurm has been originally developed by [Mark
 Grondo](https://github.com/grondo) at [Lawrence Livermore National
-Laboratory](https://www.llnl.gov/). This is extracted from the [LLNL Slurml
+Laboratory](https://www.llnl.gov/). This is extracted from the [LLNL Slurm
 SPANK plugins](https://github.com/grondo/slurm-spank-plugins) project and
 re-packaged to only provide the LUA SPANK plugin, for easier installation.**
 
