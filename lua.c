@@ -826,7 +826,11 @@ static int lua_spank_table_create (lua_State *L, spank_t sp, int ac, char **av)
     int i;
 
     lua_newtable (L);
+#if LUA_VERSION_NUM >= 502
+    luaL_setfuncs(L, spank_functions, 0);
+#else
     luaL_register (L, NULL, spank_functions);
+#endif
 
     /*  Register spank handle as light userdata inside spank table:
      */
