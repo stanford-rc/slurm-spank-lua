@@ -944,16 +944,32 @@ static int SPANK_table_create (lua_State *L)
      *  Create more user-friendly lua versions of SLURM log functions
      *   with lua.
      */
+#if LUA_VERSION_NUM >= 502
+    luaL_loadstring (L, "SPANK._log_msg (-1, string.format(table.unpack({...})))");
+#else
     luaL_loadstring (L, "SPANK._log_msg (-1, string.format(unpack({...})))");
+#endif
     lua_setfield (L, -2, "log_error");
 
+#if LUA_VERSION_NUM >= 502
+    luaL_loadstring (L, "SPANK._log_msg (0, string.format(table.unpack({...})))");
+#else
     luaL_loadstring (L, "SPANK._log_msg (0, string.format(unpack({...})))");
+#endif
     lua_setfield (L, -2, "log_info");
 
+#if LUA_VERSION_NUM >= 502
+    luaL_loadstring (L, "SPANK._log_msg (1, string.format(table.unpack({...})))");
+#else
     luaL_loadstring (L, "SPANK._log_msg (1, string.format(unpack({...})))");
+#endif
     lua_setfield (L, -2, "log_verbose");
 
+#if LUA_VERSION_NUM >= 502
+    luaL_loadstring (L, "SPANK._log_msg (2, string.format(table.unpack({...})))");
+#else
     luaL_loadstring (L, "SPANK._log_msg (2, string.format(unpack({...})))");
+#endif
     lua_setfield (L, -2, "log_debug");
 
     /*
