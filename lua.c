@@ -214,7 +214,7 @@ static int name_to_item (const char *name)
 static int l_spank_get_item_val (lua_State *L, spank_t sp, spank_item_t item)
 {
     spank_err_t err;
-    long val;
+    int val;
 
     err = spank_get_item (sp, item, &val);
     if (err != ESPANK_SUCCESS)
