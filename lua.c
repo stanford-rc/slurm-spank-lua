@@ -1236,6 +1236,29 @@ int spank_lua_init (spank_t sp, int ac, char *av[])
     ListIterator i;
     struct lua_script *script;
     int rc = 0;
+    int j = 0;
+    void *lua_handle = NULL;
+
+    char *const lua_libs[] = {
+        "liblua.so",
+#if LUA_VERSION_NUM == 503
+        "liblua-5.3.so",
+        "liblua5.3.so",
+        "liblua5.3.so.0",
+        "liblua.so.5.3",
+#elif LUA_VERSION_NUM == 502
+        "liblua-5.2.so",
+        "liblua5.2.so",
+        "liblua5.2.so.0",
+        "liblua.so.5.2",
+#else
+        "liblua-5.1.so",
+        "liblua5.1.so",
+        "liblua5.1.so.0",
+        "liblua.so.5.1",
+#endif
+        NULL
+    };
 
     if (ac == 0) {
         slurm_error ("spank/lua: Requires at least 1 arg");
@@ -1251,8 +1274,11 @@ int spank_lua_init (spank_t sp, int ac, char *av[])
      *   available globally (so lua doesn't fail to dlopen its
      *   DSOs
      */
-    if (!dlopen ("liblua.so", RTLD_NOW | RTLD_GLOBAL)) {
-        slurm_error ("spank/lua: Failed to open liblua.so");
+    while (lua_libs[j] &&  !(lua_handle = dlopen(lua_libs[j], RTLD_NOW | RTLD_GLOBAL)))
+        j++;
+
+    if (!lua_handle) {
+        slurm_error ("spank/lua: Failed to find a 'lua.so' version");
         return (-1);
     }
 
