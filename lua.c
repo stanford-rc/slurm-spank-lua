@@ -767,6 +767,27 @@ static int l_spank_option_getopt (lua_State *L)
 }
 #endif /* if HAVE_SPANK_OPTION_GETOPT */
 
+static int l_spank_remote (lua_State *L)
+{
+    spank_t sp;
+
+    int val;
+
+    sp = lua_getspank (L, 1);
+    switch (spank_remote (sp)) {
+    case 0:
+        lua_pushstring (L, "no");
+        break;
+    case 1:
+        lua_pushstring (L, "yes");
+        break;
+    default:
+        lua_pushstring (L, "error");
+        break;
+    }
+
+    return (1);
+}
 
 
 static int l_spank_context (lua_State *L)
@@ -805,6 +826,7 @@ static int l_spank_context (lua_State *L)
  ****************************************************************************/
 
 static const struct luaL_Reg spank_functions [] = {
+    { "remote",               l_spank_remote },
     { "register_option",      l_spank_option_register },
     { "get_item",             l_spank_get_item },
 #if HAVE_SPANK_OPTION_GETOPT
