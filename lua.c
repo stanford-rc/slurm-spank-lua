@@ -208,10 +208,27 @@ static int name_to_item (const char *name)
 }
 
 /*
- *  Generic function to push a spank item with a numeric representation
+ *  Generic function to push a spank item with a numeric (int) representation
  *   on to the lua stack.
  */
-static int l_spank_get_item_val (lua_State *L, spank_t sp, spank_item_t item)
+static int l_spank_get_item_int (lua_State *L, spank_t sp, spank_item_t item)
+{
+    spank_err_t err;
+    int val;
+
+    err = spank_get_item (sp, item, &val);
+    if (err != ESPANK_SUCCESS)
+        return l_spank_error (L, err);
+
+    lua_pushnumber (L, val);
+    return (1);
+}
+
+/*
+ *  Generic function to push a spank item with a numeric (long) representation
+ *   on to the lua stack.
+ */
+static int l_spank_get_item_long (lua_State *L, spank_t sp, spank_item_t item)
 {
     spank_err_t err;
     long val;
@@ -223,6 +240,7 @@ static int l_spank_get_item_val (lua_State *L, spank_t sp, spank_item_t item)
     lua_pushnumber (L, val);
     return (1);
 }
+
 
 /*
  *  Generic function to push a spank item with a string representation
@@ -397,9 +415,10 @@ static int l_spank_get_item (lua_State *L)
         case S_TASK_GLOBAL_ID:
         case S_TASK_PID:
         case S_STEP_CPUS_PER_TASK:
+            return l_spank_get_item_int (L, sp, item);
         case S_JOB_ALLOC_MEM:
         case S_STEP_ALLOC_MEM:
-            return l_spank_get_item_val (L, sp, item);
+            return l_spank_get_item_long (L, sp, item);
         case S_JOB_ALLOC_CORES:
         case S_STEP_ALLOC_CORES:
         case S_SLURM_VERSION:
