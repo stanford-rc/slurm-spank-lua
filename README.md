@@ -11,7 +11,7 @@ The [Lua](https://www.lua.org/) [SPANK](https://slurm.schedmd.com/spank.html)
 plugin for [Slurm](https://slurm.schedmd.com/) allows Lua scripts to take the
 place of compiled C shared objects in the Slurm `spank(8)` framework. All the
 power of the C SPANK API is exported to Lua via this plugin, which loads one or
-scripts and executes Lua functions during the appropriate Slurm phase (as
+more scripts and executes Lua functions during the appropriate Slurm phase (as
 described in the `spank(8)` manpage).
 
 
