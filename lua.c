@@ -67,7 +67,6 @@ struct lua_script_option {
 /*
  *  Global lua State and script_option_list declarations:
  */
-static lua_State *global_L = NULL;
 static List script_option_list = NULL;
 
 /*
@@ -77,7 +76,6 @@ static List script_option_list = NULL;
 struct lua_script {
     char *path;
     lua_State *L;
-    int ref;
     int fail_on_error;
 };
 List lua_script_list = NULL;
@@ -1073,57 +1071,45 @@ int load_spank_options_table (struct lua_script *script, spank_t sp)
     return (0);
 }
 
-static struct lua_script * lua_script_create (lua_State *L, const char *path)
+static lua_State *lua_script_newstate(const char *path) {
+    lua_State *L = luaL_newstate ();
+    luaL_openlibs (L);
+
+    /*
+     *  Create the global SPANK table
+     */
+    SPANK_table_create (L);
+
+    /*
+     *  Set up handler for lua_atpanic() so lua doesn't exit() on us.
+     *   This handles errors from outside of protected mode --
+     *   for example when this plugin is processing the global
+     *   spank_options table. The spank_atpanic() function will
+     *   return to the setjmp() point below (thus avoiding Lua's
+     *   call to exit() from its own panic handler). This is basically
+     *   here so that we can use luaL_error() everwhere without
+     *   worrying about the context of the call.
+     */
+    lua_atpanic (L, spank_atpanic);
+    if (setjmp (panicbuf)) {
+        slurm_error ("spank/lua: PANIC: %s: %s",
+                path, lua_tostring (L, -1));
+        return NULL;
+    }
+    return L;
+}
+
+static struct lua_script * lua_script_create (const char *path)
 {
+    lua_State *L = lua_script_newstate(path);
+    if (!L)
+        return NULL;
+
     struct lua_script *script = malloc (sizeof (*script));
 
     script->path = strdup (path);
-    script->L = lua_newthread (L);
-    script->ref = luaL_ref (L, LUA_REGISTRYINDEX);
+    script->L = L;
     script->fail_on_error = 0;
-
-    /*
-     *  Now we need to redefine the globals table for this script/thread.
-     *   this will keep each script's globals in a private namespace,
-     *   (including all the spank callback functions).
-     *   To do this, we define a new table in the current thread's
-     *   state, and give that table's metatable an __index field that
-     *   points to the real globals table, then replace this threads
-     *   globals table with the new (empty) table.
-     *
-     */
-
-    /*  New globals table */
-    lua_newtable (script->L);
-
-    /*  metatable for table on top of stack */
-    lua_newtable (script->L);
-
-    /*
-     *  Now set metatable->__index to point to the real globals
-     *   table. This way Lua will check the root global table
-     *   for any nonexistent items in the current thread's global
-     *   table.
-     */
-    lua_pushstring (script->L, "__index");
-#if LUA_VERSION_NUM >= 502
-    lua_pushglobaltable (script->L);
-#else
-    lua_pushvalue (script->L, LUA_GLOBALSINDEX);
-#endif
-    lua_settable (script->L, -3);
-
-    /*  Now set metatable for the new globals table */
-    lua_setmetatable (script->L, -2);
-
-    /*  And finally replace the globals table with the (empty)  table
-     *   now at top of the stack
-     */
-#if LUA_VERSION_NUM >= 502
-    lua_pop (script->L, 1);
-#else
-    lua_replace (script->L, LUA_GLOBALSINDEX);
-#endif
 
     return script;
 }
@@ -1131,7 +1117,7 @@ static struct lua_script * lua_script_create (lua_State *L, const char *path)
 static void lua_script_destroy (struct lua_script *s)
 {
     free (s->path);
-    luaL_unref (global_L, LUA_REGISTRYINDEX, s->ref);
+    lua_close(s->L);
     /* Only call lua_close() on the main lua state  */
     free (s);
 }
@@ -1142,7 +1128,7 @@ static int ef (const char *p, int eerrno)
     return (-1);
 }
 
-List lua_script_list_create (lua_State *L, const char *pattern)
+List lua_script_list_create (const char *pattern)
 {
     glob_t gl;
     size_t i;
@@ -1157,7 +1143,7 @@ List lua_script_list_create (lua_State *L, const char *pattern)
             l = list_create ((ListDelF) lua_script_destroy);
             for (i = 0; i < gl.gl_pathc; i++) {
                 struct lua_script * s;
-                s = lua_script_create (L, gl.gl_pathv[i]);
+                s = lua_script_create (gl.gl_pathv[i]);
                 if (s == NULL) {
                     slurm_error ("lua_script_create failed for %s.",
                             gl.gl_pathv[i]);
@@ -1323,36 +1309,12 @@ int spank_lua_init (spank_t sp, int ac, char *av[])
         return (-1);
     }
 
-    global_L = luaL_newstate ();
-    luaL_openlibs (global_L);
-
-    /*
-     *  Create the global SPANK table
-     */
-    SPANK_table_create (global_L);
-
-    lua_script_list = lua_script_list_create (global_L, av[0]);
+    lua_script_list = lua_script_list_create (av[0]);
     if (lua_script_list == NULL) {
         slurm_verbose ("spank/lua: No files found in %s", av[0]);
         return (0);
     }
 
-    /*
-     *  Set up handler for lua_atpanic() so lua doesn't exit() on us.
-     *   This handles errors from outside of protected mode --
-     *   for example when this plugin is processing the global
-     *   spank_options table. The spank_atpanic() function will
-     *   return to the setjmp() point below (thus avoiding Lua's
-     *   call to exit() from its own panic handler). This is basically
-     *   here so that we can use luaL_error() everwhere without
-     *   worrying about the context of the call.
-     */
-    lua_atpanic (global_L, spank_atpanic);
-    if (setjmp (panicbuf)) {
-        slurm_error ("spank/lua: PANIC: %s: %s",
-                av[0], lua_tostring (global_L, -1));
-        return (-1);
-    }
 
     i = list_iterator_create (lua_script_list);
     while ((script = list_next (i))) {
@@ -1507,7 +1469,6 @@ int slurm_spank_exit (spank_t sp, int ac, char *av[])
         list_destroy (lua_script_list);
     if (script_option_list)
         list_destroy (script_option_list);
-    lua_close (global_L);
     return (rc);
 }
 
@@ -1520,7 +1481,6 @@ int slurm_spank_slurmd_exit (spank_t sp, int ac, char *av[])
         list_destroy (lua_script_list);
     if (script_option_list)
         list_destroy (script_option_list);
-    lua_close (global_L);
     return (rc);
 }
 
