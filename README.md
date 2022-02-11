@@ -57,8 +57,13 @@ $ cc -o lib/list.o -fPIC -c lib/list.c
 $ cc -shared -fPIC -o lua.so lua.o lib/list.o -llua
 ```
 
-Then, the  `lua.so` should be placed in `/usr/lib/slurm`, and `lua.conf` in
-`/etc/slurm/plugstackconf.d/`.
+or just:
+```
+$ make
+```
+
+Then, the generated `lua.so` should be placed in `/usr/lib/slurm`, and
+`lua.conf` in `/etc/slurm/plugstackconf.d/`.
 
 
 ## Configuration
