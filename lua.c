@@ -65,7 +65,7 @@ struct lua_script_option {
 };
 
 /*
- *  Global lua State and script_option_list declarations:
+ *  Global script_option_list declaration:
  */
 static List script_option_list = NULL;
 
