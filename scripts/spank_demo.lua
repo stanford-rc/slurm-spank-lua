@@ -1,5 +1,5 @@
 -- ===========================================================================
--- SPANK plugin to demonstrate when and where and by whom the SPANK functions 
+-- SPANK plugin to demonstrate when and where and by whom the SPANK functions
 -- are called.
 -- ===========================================================================
 
@@ -10,7 +10,7 @@
 local posix = require("posix")
 
 
--- 
+--
 -- constants
 --
 
@@ -45,13 +45,22 @@ function getgid()
     return gid
 end
 
+function getdevicecgroup()
+    local f = io.popen ("grep devices /proc/$$/cgroup  | cut -d: -f3")
+    local d_cg = f:read("*a") or ""
+    f:close()
+    d_cg = string.gsub(d_cg, "\n$", "")
+    return d_cg
+end
+
 function display_msg(spank, caller)
     local context = spank.context
     local hostname = gethostname()
     local uid = getuid()
     local gid = getgid()
+    local device_cgroup = getdevicecgroup()
 
-    SPANK.log_info("%s: ctx:%s host:%s caller:%s uid:%s gid:%s" , myname, context, hostname, caller, uid, gid)
+    SPANK.log_info("%s: ctx:%s host:%s caller:%s uid:%s gid:%s device_cgroup:%s" , myname, context, hostname, caller, uid, gid, device_cgroup)
     return 0
 end
 
