@@ -974,6 +974,10 @@ static int l_spank_log_msg (lua_State *L)
         slurm_verbose ("%s", msg);
     else if (level == 2)
         slurm_debug ("%s", msg);
+    else if (level == 3)
+        slurm_debug2 ("%s", msg);
+    else if (level == 4)
+        slurm_debug3 ("%s", msg);
     return (0);
 }
 
@@ -987,33 +991,19 @@ static int SPANK_table_create (lua_State *L)
      *  Create more user-friendly lua versions of SLURM log functions
      *   with lua.
      */
+    char log_levels[][16] = { "log_error", "log_info",   "log_verbose",
+                              "log_debug", "log_debug2", "log_debug3" };
+    size_t i;
+    for (i = 0; i < sizeof(log_levels) / sizeof(log_levels[0]); i++) {
+        char loadstr[64];
+        char loadstr_table[6] = "";
 #if LUA_VERSION_NUM >= 502
-    luaL_loadstring (L, "SPANK._log_msg (-1, string.format(table.unpack({...})))");
-#else
-    luaL_loadstring (L, "SPANK._log_msg (-1, string.format(unpack({...})))");
+        loadstr_table = "table.";
 #endif
-    lua_setfield (L, -2, "log_error");
-
-#if LUA_VERSION_NUM >= 502
-    luaL_loadstring (L, "SPANK._log_msg (0, string.format(table.unpack({...})))");
-#else
-    luaL_loadstring (L, "SPANK._log_msg (0, string.format(unpack({...})))");
-#endif
-    lua_setfield (L, -2, "log_info");
-
-#if LUA_VERSION_NUM >= 502
-    luaL_loadstring (L, "SPANK._log_msg (1, string.format(table.unpack({...})))");
-#else
-    luaL_loadstring (L, "SPANK._log_msg (1, string.format(unpack({...})))");
-#endif
-    lua_setfield (L, -2, "log_verbose");
-
-#if LUA_VERSION_NUM >= 502
-    luaL_loadstring (L, "SPANK._log_msg (2, string.format(table.unpack({...})))");
-#else
-    luaL_loadstring (L, "SPANK._log_msg (2, string.format(unpack({...})))");
-#endif
-    lua_setfield (L, -2, "log_debug");
+        snprintf(loadstr, 64, "SPANK._log_msg (%d, string.format(%sunpack({...})))", i-1, loadstr_table);
+        luaL_loadstring (L, loadstr);
+        lua_setfield (L, -2, log_levels[i]);
+    }
 
     /*
      *  SPANK.SUCCESS and SPANK.FAILURE
