@@ -978,6 +978,10 @@ static int l_spank_log_msg (lua_State *L)
         slurm_debug2 ("%s", msg);
     else if (level == 4)
         slurm_debug3 ("%s", msg);
+#if SLURM_VERSION_NUMBER > SLURM_VERSION_NUM(20, 2, 0)
+    else if (level == 5)
+        slurm_spank_log ("%s", msg);
+#endif
     return (0);
 }
 
@@ -992,7 +996,11 @@ static int SPANK_table_create (lua_State *L)
      *   with lua.
      */
     char log_levels[][16] = { "log_error", "log_info",   "log_verbose",
-                              "log_debug", "log_debug2", "log_debug3" };
+                              "log_debug", "log_debug2", "log_debug3",
+#if SLURM_VERSION_NUMBER > SLURM_VERSION_NUM(20, 2, 0)
+                              "log_user",
+#endif
+    };
     size_t i;
     for (i = 0; i < sizeof(log_levels) / sizeof(log_levels[0]); i++) {
         char loadstr[64];
