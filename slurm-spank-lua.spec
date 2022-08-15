@@ -4,7 +4,7 @@
 
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
-Version: 0.45
+Version: 0.46
 Release: %{slurm_version}.1%{?dist}
 License: GPL
 Group: System Environment/Base
@@ -71,6 +71,8 @@ rm -rf "$RPM_BUILD_ROOT"
 
 
 %changelog
+* Mon Aug 15 2022 Trey Dockendorf <tdockendorf@osc.edu> - 0.46-1
+- Fix compilation issue with Lua >5.2
 * Tue May 17 2022 Kilian Cavalotti <kilian@stanford.edu> - 0.45-1
 - Add support for slurm_debug2(), slurm_debug3() and slurm_spank_log()
 * Fri Feb 11 2022 Kilian Cavalotti <kilian@stanford.edu> - 0.44-1
