@@ -11,9 +11,9 @@ Group: System Environment/Base
 Source0: %{name}-%{version}.tar.gz
 BuildRoot:  %{_tmppath}/%{name}-%{version}
 
-BuildRequires: slurm-devel bison flex
-BuildRequires: lua-devel >= 5.1
-Requires:      slurm lua-devel >= 5.1
+BuildRequires: slurm-devel bison flex pkgconfig(pkg-config)
+BuildRequires: pkgconfig(lua) >= 5.1
+Requires:      slurm
 
 %description
 The lua.so spank plugin for Slurm allows lua scripts to take the place of
@@ -36,7 +36,7 @@ EOF
 chmod +x %{_builddir}/find-requires
 
 %build
-%{__cc} -g -o lua.o -fPIC -c lua.c
+%{__cc} -g -o lua.o -fPIC -c lua.c $(pkg-config --cflags lua)
 %{__cc} -g -o lib/list.o -fPIC -c lib/list.c
 %{__cc} -g -shared -fPIC -o lua.so lua.o lib/list.o -llua
 # Dummy file to get a dependency on libslurm
