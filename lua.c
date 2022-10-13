@@ -1001,9 +1001,9 @@ static int SPANK_table_create (lua_State *L)
     for (i = 0; i < sizeof(log_levels) / sizeof(log_levels[0]); i++) {
         char loadstr[64];
 #if LUA_VERSION_NUM >= 502
-        char loadstr_table[6] = "table.";
+        char loadstr_table[7] = "table.";
 #else
-        char loadstr_table[6] = "";
+        char loadstr_table[7] = "";
 #endif
         snprintf(loadstr, 64, "SPANK._log_msg (%d, string.format(%sunpack({...})))", i-1, loadstr_table);
         luaL_loadstring (L, loadstr);
