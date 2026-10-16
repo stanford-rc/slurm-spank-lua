@@ -1,4 +1,4 @@
-slurm-spank-lua (0.47-1) UNRELEASED; urgency=medium
+slurm-spank-lua (0.48-1) unstable; urgency=medium
 
   * Initial Debian packaging.
 
