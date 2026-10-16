@@ -56,13 +56,13 @@ The Debian packaging targets Debian 13 with Lua 5.4 and SchedMD's
 your cluster, plus the build tools:
 
 ```sh
-sudo apt install build-essential debhelper devscripts pkg-config liblua5.4-dev
+# apt install build-essential debhelper devscripts pkg-config liblua5.4-dev
 ```
 
 From the source directory, run as an unprivileged user:
 
 ```sh
-./build_deb.sh
+$ ./build_deb.sh
 ```
 
 Packages, build metadata, and the build log are written to `pkg/<version>/`.
@@ -78,18 +78,18 @@ increment the Debian revision in `debian/changelog`.
 Install the generated package on submission and compute hosts:
 
 ```sh
-SLURM_VER=$(dpkg-query -W -f='${Version}' slurm-smd-dev)
-VER="$(dpkg-parsechangelog -S Version)+slurm${SLURM_VER%.*}"
-ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
-sudo apt install "./pkg/$VER/slurm-spank-lua_${VER}_${ARCH}.deb"
+$ SLURM_VER=$(dpkg-query -W -f='${Version}' slurm-smd-dev)
+$ VER="$(dpkg-parsechangelog -S Version)+slurm${SLURM_VER%.*}"
+$ ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
+$ sudo apt install "./pkg/$VER/slurm-spank-lua_${VER}_${ARCH}.deb"
 ```
 
-Run these commands from the source directory on the build host; copy the
-resulting package to other hosts for installation. Adjust `pkg/` if you set
-`OUT_DIR`. The package installs
-the plugin in `/usr/lib/<multiarch>/slurm/`, its configuration in
-`/etc/slurm/plugstack.conf.d/lua.conf`, and the demo script under
-`/etc/slurm/lua.d/disabled/`. Enable the configuration include described above.
+Run these commands from the source directory on the build host. Adjust `pkg/` if 
+you set `OUT_DIR`. The package installs:
+* the plugin in `/usr/lib/<multiarch>/slurm/`, 
+* its configuration in `/etc/slurm/plugstack.conf.d/lua.conf`, 
+* and the demo script under `/etc/slurm/lua.d/disabled/`. 
+Enable the configuration include described above.
 
 ### Manual installation
 
