@@ -69,19 +69,24 @@ Packages, build metadata, and the build log are written to `pkg/<version>/`.
 Set `OUT_DIR` to use a different output directory. Failed builds remain in
 the printed temporary directory, with details in `build.log`.
 
-The package version includes the Slurm series used for the build, for
-example `0.47-1+slurm25.11`. Its dependencies require at least the installed
-Slurm package version and exclude the next Slurm series. Rebuild the plugin
+The package version includes the Slurm series used for the build as a
+suffix, for example `+slurm25.11`. Its dependencies require at least the
+installed Slurm package version and exclude the next Slurm series. Rebuild the plugin
 when upgrading to a new Slurm series. For changed builds within a series,
 increment the Debian revision in `debian/changelog`.
 
 Install the generated package on submission and compute hosts:
 
 ```sh
-sudo apt install ./pkg/0.47-1+slurm25.11/slurm-spank-lua_0.47-1+slurm25.11_amd64.deb
+SLURM_VER=$(dpkg-query -W -f='${Version}' slurm-smd-dev)
+VER="$(dpkg-parsechangelog -S Version)+slurm${SLURM_VER%.*}"
+ARCH=$(dpkg-architecture -qDEB_HOST_ARCH)
+sudo apt install "./pkg/$VER/slurm-spank-lua_${VER}_${ARCH}.deb"
 ```
 
-Adjust the version and architecture to match your build. The package installs
+Run these commands from the source directory on the build host; copy the
+resulting package to other hosts for installation. Adjust `pkg/` if you set
+`OUT_DIR`. The package installs
 the plugin in `/usr/lib/<multiarch>/slurm/`, its configuration in
 `/etc/slurm/plugstack.conf.d/lua.conf`, and the demo script under
 `/etc/slurm/lua.d/disabled/`. Enable the configuration include described above.
@@ -147,6 +152,3 @@ Other useful information sources:
 * Slurm SPANK documentation: https://slurm.schedmd.com/spank.html
 * SPANK functions and variables are defined in
   [spank.h](https://github.com/SchedMD/slurm/blob/master/slurm/spank.h)
-
-
-

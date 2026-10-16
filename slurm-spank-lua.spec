@@ -4,7 +4,7 @@
 
 Summary: Slurm Lua SPANK plugin
 Name: slurm-spank-lua
-Version: 0.47
+Version: 0.48
 Release: %{slurm_version}.1%{?dist}
 License: GPL
 Group: System Environment/Base
@@ -71,6 +71,9 @@ rm -rf "$RPM_BUILD_ROOT"
 
 
 %changelog
+* Thu Oct 15 2026 Kilian Cavalotti <kilian@stanford.edu> - 0.48-1
+- Add Debian packaging and build instructions
+- Use pkg-config for Lua headers and libraries in the Makefile
 * Fri Oct 14 2022 Matt Ezell <ezellma@ornl.gov> - 0.47-1
 - Use pkg-config to find lua headers (SLES support)
 - Always build with support for spank:getopt()
