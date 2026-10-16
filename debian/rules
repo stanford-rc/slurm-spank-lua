@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+
+include /usr/share/dpkg/architecture.mk
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
+SLURM_VER := $(shell dpkg-query -W -f='$${Version}' slurm-smd-dev)
+SLURM_SERIES := $(shell echo '$(SLURM_VER)' | cut -d. -f1,2)
+SLURM_NEXT := $(shell echo '$(SLURM_SERIES)' | \
+    awk -F. '{printf "%s.%02d", $$1, $$2 + 1}')
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	dh_auto_build -- LUA_PKG=lua5.4
+
+override_dh_auto_install:
+	install -D -m755 lua.so \
+	    debian/slurm-spank-lua/usr/lib/$(DEB_HOST_MULTIARCH)/slurm/lua.so
+	install -D -m644 scripts/spank_demo.lua \
+	    debian/slurm-spank-lua/etc/slurm/lua.d/disabled/spank_demo.lua
+	install -D -m644 debian/lua.conf \
+	    debian/slurm-spank-lua/etc/slurm/plugstack.conf.d/lua.conf
+
+override_dh_gencontrol:
+	dh_gencontrol -- -V"slurm:Depends=slurm-smd (>= $(SLURM_VER)), \
+	    slurm-smd (<< $(SLURM_NEXT))"

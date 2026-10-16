@@ -1,0 +1,5 @@
+slurm-spank-lua (0.47-1) UNRELEASED; urgency=medium
+
+  * Initial Debian packaging.
+
+ -- Kilian Cavalotti <kilian@stanford.edu>  Thu, 15 Oct 2026 12:00:00 +0000

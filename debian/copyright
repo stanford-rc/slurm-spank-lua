@@ -1,0 +1,12 @@
+This package contains the Lua SPANK plugin for Slurm.
+Source: https://github.com/stanford-rc/slurm-spank-lua
+
+Copyright (C) 2007-2008 Lawrence Livermore National Security, LLC.
+Copyright (C) 2001-2002 The Regents of the University of California (lib/).
+See the individual source files for additional copyright notices.
+
+This software is distributed under the GNU General Public License,
+version 2 or (at your option) any later version.
+
+On Debian systems, the full GNU General Public License version 2 is
+available in /usr/share/common-licenses/GPL-2.
