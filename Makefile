@@ -7,8 +7,12 @@ package:
 	mkdir -p $(PKGDIR)
 	git ls-files | tar -c --transform 's,^,slurm-spank-lua-$(VERSION)/,' -T - | gzip > $(PKGDIR)/slurm-spank-lua-$(VERSION).tar.gz
 
-CFLAGS = -fPIC -g
+PKG_CONFIG ?= pkg-config
+LUA_PKG ?= lua
+CPPFLAGS += $(shell $(PKG_CONFIG) --cflags $(LUA_PKG))
+CFLAGS += -fPIC -g
+LDLIBS += $(shell $(PKG_CONFIG) --libs $(LUA_PKG)) -ldl
 clean:
 	rm -f lua.o lib/list.o lua.so
 lua.so: lua.o lib/list.o
-	cc -shared -fPIC -o $@ $^ -llua
+	$(CC) $(LDFLAGS) -shared -fPIC -o $@ $^ $(LDLIBS)

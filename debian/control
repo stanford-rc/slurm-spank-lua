@@ -1,0 +1,16 @@
+Source: slurm-spank-lua
+Section: admin
+Priority: optional
+Maintainer: Kilian Cavalotti <kilian@stanford.edu>
+Build-Depends: debhelper-compat (= 13), pkg-config, liblua5.4-dev,
+ slurm-smd-dev
+Standards-Version: 4.7.0
+Homepage: https://github.com/stanford-rc/slurm-spank-lua
+Rules-Requires-Root: no
+
+Package: slurm-spank-lua
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ${slurm:Depends}
+Description: Lua SPANK plugin for Slurm
+ Run Lua scripts through Slurm's SPANK interface on submission and compute
+ hosts.

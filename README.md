@@ -31,7 +31,7 @@ include /etc/slurm/plugstack.conf.d/*.conf
 so we can enable the Slurm SPANK Lua plugin by adding a `lua.conf` file in
 `/etc/slurm/plugstack.conf.d/`
 
-### RPM-based installation (recommended)
+### RPM-based installation
 
 Get the source and build the RPM:
 
@@ -49,6 +49,43 @@ Install the generated RPM. For instance (paths, arch and version may vary):
 # rpm -Uvh ~/rpmbuild/RPMS/x86_64/slurm-spank-lua-0.38-1.x86_64.rpm
 ```
 
+### Debian package
+
+The Debian packaging targets Debian 13 with Lua 5.4 and SchedMD's
+`slurm-smd` packages. Install `slurm-smd-dev` matching the Slurm version on
+your cluster, plus the build tools:
+
+```sh
+sudo apt install build-essential debhelper devscripts pkg-config liblua5.4-dev
+```
+
+From the source directory, run as an unprivileged user:
+
+```sh
+./build_deb.sh
+```
+
+Packages, build metadata, and the build log are written to `pkg/<version>/`.
+Set `OUT_DIR` to use a different output directory. Failed builds remain in
+the printed temporary directory, with details in `build.log`.
+
+The package version includes the Slurm series used for the build, for
+example `0.47-1+slurm25.11`. Its dependencies require at least the installed
+Slurm package version and exclude the next Slurm series. Rebuild the plugin
+when upgrading to a new Slurm series. For changed builds within a series,
+increment the Debian revision in `debian/changelog`.
+
+Install the generated package on submission and compute hosts:
+
+```sh
+sudo apt install ./pkg/0.47-1+slurm25.11/slurm-spank-lua_0.47-1+slurm25.11_amd64.deb
+```
+
+Adjust the version and architecture to match your build. The package installs
+the plugin in `/usr/lib/<multiarch>/slurm/`, its configuration in
+`/etc/slurm/plugstack.conf.d/lua.conf`, and the demo script under
+`/etc/slurm/lua.d/disabled/`. Enable the configuration include described above.
+
 ### Manual installation
 
 The source can be compiled with:
@@ -63,13 +100,17 @@ or just:
 $ make
 ```
 
+The Makefile uses `pkg-config` to locate Lua. For a versioned pkg-config
+name, use `make LUA_PKG=lua5.4` (and install the corresponding development
+package).
+
 Then, the generated `lua.so` should be placed in `/usr/lib/slurm`, and
-`lua.conf` in `/etc/slurm/plugstackconf.d/`.
+`lua.conf` in `/etc/slurm/plugstack.conf.d/`.
 
 
 ## Configuration
 
-The RPM will install a `lua.conf` file in `/etc/slurm/plugstackconf.d/` that
+The packages install a `lua.conf` file in `/etc/slurm/plugstack.conf.d/` that
 contains:
 ```
 required  lua.so  /etc/slurm/lua.d/*.lua
@@ -80,7 +121,7 @@ automatically executed by Slurm.
 
 
 
-The RPM provides a demo script, `spank_demo.lua`,  based on the [C SPANK demo
+The packages provide a demo script, `spank_demo.lua`, based on the [C SPANK demo
 plugin](https://github.com/yqin/slurm-plugins/blob/master/spank_demo.c) by
 [Yong Qin](https://github.com/yqin). Its goal is simply to demonstrate all the
 different SPANK functions and the context in which they're called. The plugin
@@ -106,7 +147,6 @@ Other useful information sources:
 * Slurm SPANK documentation: https://slurm.schedmd.com/spank.html
 * SPANK functions and variables are defined in
   [spank.h](https://github.com/SchedMD/slurm/blob/master/slurm/spank.h)
-
 
 
 
